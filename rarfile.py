@@ -692,14 +692,17 @@ class RarFile(object):
                 h = self._parse_header(fd)
             if not h:
                 if more_vols:
-                    volume += 1
-                    volfile = self._next_volname(volfile)
-                    fd.close()
-                    fd = open(volfile, "rb")
-                    self._fd = fd
-                    more_vols = 0
-                    endarc = 0
-                    continue
+                    try:
+                        volume += 1
+                        volfile = self._next_volname(volfile)
+                        fd.close()
+                        fd = open(volfile, "rb")
+                        self._fd = fd
+                        more_vols = 0
+                        endarc = 0
+                        continue
+                    except IOError:
+                        print 'error reading next file, continuing'
                 break
             h.volume = volume
             h.volume_file = volfile
